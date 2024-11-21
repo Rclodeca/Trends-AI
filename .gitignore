@@ -40,4 +40,4 @@ yarn-error.log*
 next-env.d.ts
 
 # store
-/app/store/topics.json
+/store/dynamic/*
