@@ -1,25 +1,15 @@
-import fs from "fs/promises";
-const STORE_ROUTE = "@/app/store/topics.json";
-const ENCODING = "utf-8";
-
-async function writeRawJSON(data) {
-    return await fs.writeFile(STORE_ROUTE, JSON.stringify(store, null, 2));
-}
-
-async function getRawJSON() {
-    const data = await fs.readFile(STORE_ROUTE, ENCODING);
-    return JSON.parse(data);
-}
+import { getRawJSON, writeRawJSON } from "./store";
+const STORE_ROUTE = "@/store/topics.json";
 
 export async function getTopics() {
-  const store = await getRawJSON();
+  const store = await getRawJSON(STORE_ROUTE);
   const { topics } = store;
 
   return topics && topics.length ? topics : []
 }
 
 export async function addTopic(topic) {
-    const store = await getRawJSON();
+    const store = await getRawJSON(STORE_ROUTE);
     const { topics } = store;
   
     if(topics.includes(topic)) {
@@ -34,7 +24,7 @@ export async function addTopic(topic) {
 }
 
 export async function deleteTopic(topic) {
-    const store = await getRawJSON();
+    const store = await getRawJSON(STORE_ROUTE);
     const { topics } = store;
   
     const updatedTopics = topics.filter(t => t !== topic)
@@ -43,7 +33,7 @@ export async function deleteTopic(topic) {
     }
 
     store.topics = updatedTopics
-    await writeRawJSON(store);
+    await writeRawJSON(STORE_ROUTE, store);
 
     return true
 }

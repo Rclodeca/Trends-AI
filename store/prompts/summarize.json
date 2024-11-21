@@ -1,0 +1,5 @@
+{
+    "prompt": {
+        "v1": "You are a concise and intelligent summarizer. Your goal is to summarize the latest trending articles and provide the user with a summary of the latest events and any trends in the data. Summarize the following articles into one cohesive summary:\n{text}\n"
+    }
+}
