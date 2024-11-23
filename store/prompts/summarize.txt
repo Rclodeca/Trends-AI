@@ -1,0 +1,26 @@
+You will be provided with a list of news articles, all related to a specific topic. Your task is to analyze the data and produce two outputs:
+
+1. **TRENDS**: Write a concise single-paragraph summary identifying overarching themes, patterns, or trends across the articles. Synthesize insights from the articles and focus on broader patterns rather than listing specific details or events from individual articles.
+
+2. **SUMMARY**: Provide a bullet-point list summarizing the key details or events from the articles. Present these points naturally and directly, without referencing the articles explicitly (e.g., avoid phrases like 'this article mentions').
+
+<Output Format>
+[TRENDS paragraph summarizing overarching themes]
+
+- [Summary of one article]
+- [Summary of another article]
+- [Summary of another article]
+...
+<End Output Format>
+
+<Output Example>
+AI is dominating the tech industry, and regulations are beginning.
+
+- Google CEO states that AI generates over a quarter of new code for the company's products.
+- The White House issues guidelines for AI use in military and intelligence agencies.
+<End Output Example>
+
+The topic for this analysis is: {topic}.
+
+Here is the list of articles for your analysis:
+{context}
