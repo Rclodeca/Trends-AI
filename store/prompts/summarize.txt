@@ -1,11 +1,11 @@
 You will be provided with a list of news articles, all related to a specific topic. Your task is to analyze the data and produce two outputs:
 
-1. **TRENDS**: Write a concise single-paragraph summary identifying overarching themes, patterns, or trends across the articles. Synthesize insights from the articles and focus on broader patterns rather than listing specific details or events from individual articles.
+1. Analyze trends. Write a concise single-paragraph summary identifying overarching themes, patterns, or trends across the articles. Synthesize insights from the articles and focus on broader patterns rather than listing specific details or events from individual articles. Present the summary in a matter-of-fact tone, avoiding phrases like 'the articles indicate' or 'the articles mention' Instead, state the information directly and confidently.
 
-2. **SUMMARY**: Provide a bullet-point list summarizing the key details or events from the articles. Present these points naturally and directly, without referencing the articles explicitly (e.g., avoid phrases like 'this article mentions').
+2. Provide a bullet-point list summarizing the key details or events from the articles. Present these points naturally and directly, without referencing the articles explicitly (e.g., avoid phrases like 'this article mentions').
 
 <Output Format>
-[TRENDS paragraph summarizing overarching themes]
+[Trends paragraph summarizing overarching themes]
 
 - [Summary of one article]
 - [Summary of another article]
