@@ -2,8 +2,8 @@
 function SystemMessage({ topic, summary, index }) {
     topic = topic.charAt(0).toUpperCase() + topic.slice(1);
     return (
-        <div class="mb-4 p-3 text-white rounded-lg w-lg" key={index}>
-            <h3 class="py-2 font-bold text-blue-500">{topic}</h3>
+        <div class="mb-4 p-5 bg-gray-950 hover:bg-gray-900 rounded-lg w-lg" key={index}>
+            <h3 class="pb-2 text-lg font-bold text-blue-500">{topic}</h3>
             <p class="">{wrapBulletPointsWithUl(summary)}</p>
         </div>
     )
@@ -12,7 +12,7 @@ function SystemMessage({ topic, summary, index }) {
 function UserMessage({ message, index }) {
     return (
         <div class="mb-4 text-right" key={index}>
-            <div class="bg-gray-800 text-grey-300 p-3 rounded-lg w-fit ml-auto">{message}</div>
+            <div class="bg-gray-700 text-grey-200 p-3 rounded-lg w-fit ml-auto">{message}</div>
         </div>
     )
 }
@@ -21,10 +21,14 @@ function wrapBulletPointsWithUl(inputString) {
     const lines = inputString.split("\n");
   
     return (
-        <ul className="list-disc">
+        <ul className="list-none leading-relaxed">
             {lines.map(line => {
                 if (line.startsWith("- ")) {
-                    return <li className="ml-4 my-1">{line.slice(2).trim()}</li>
+                    return (
+                        <li className="my-2 before:content-['→'] before:text-red-400 before:mr-2">
+                            {line.slice(2).trim()}
+                        </li>
+                    )
                 } else {
                     return line
                 }
@@ -37,14 +41,16 @@ function wrapBulletPointsWithUl(inputString) {
 
 export default function Chat({ feed }) {
     return (
-        <div class="flex flex-col flex-1 dark:bg-gray-950 dark:text-white">
-            <div class="flex-1 overflow-y-auto p-4 max-w-screen-md m-auto">
-                {feed.map((message, index) => (
-                    <SystemMessage topic={message.topic} summary={message.summary} index={index} />
-                ))}
+        <div class="flex flex-col flex-1 bg-gray-950 text-gray-200">
+            <div class="w-full flex-1 overflow-y-auto m-auto scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-gray-900">
+                <div class="max-w-screen-md m-auto p-4">
+                    {feed.map((message, index) => (
+                        <SystemMessage topic={message.topic} summary={message.summary} index={index} />
+                    ))}
+                </div>
             </div>
         
-            <div class="p-4 max-w-screen-md m-auto w-full">
+            <div class="py-4 px-2 max-w-screen-md m-auto w-full">
                 <form class="relative w-full">
                     <input
                         type="text"

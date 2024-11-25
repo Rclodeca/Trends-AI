@@ -55,7 +55,7 @@ export default function Home() {
     return (
         <div>
             <NavBar />
-            <div class="mt-12 flex h-[calc(100vh-3rem)]">
+            <div class="flex h-[calc(100vh-3rem)]">
                 <SideBar 
                     interests={interests} 
                     addInterest={addInterest} 

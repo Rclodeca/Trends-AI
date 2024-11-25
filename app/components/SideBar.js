@@ -48,12 +48,6 @@ export default function SideBar({ interests, addInterest, removeInterest }) {
                         </button>
                     </div>
                 ))}
-                <div>
-                    <button class="flex items-center space-x-2 text-left p-2 bg-gray-800 rounded hover:bg-gray-600">
-                        <PlusIcon />
-                        <span>New</span>
-                    </button>
-                </div>
             </div>
         </div>
     )
