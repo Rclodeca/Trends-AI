@@ -1,17 +1,25 @@
 "use client";
-import { PlusIcon } from "./icons";
+import { useState } from "react";
 
 export default function SideBar({ interests, addInterest, removeInterest }) {
+    const [addText, setAddText] = useState("");
 
     function handleAddInterest(e) {
         e.preventDefault();
-        const form = e.target;
-        const input = form.interest.value;
-        addInterest(input);
+        if (addText.trim() && !interests.includes(addText)) {
+            addInterest(addText);
+        }
+        setAddText("");
     }
 
     function handleRemoveInterest(interest) {
         removeInterest(interest);
+    }
+
+    function handleAddText(e) {
+        e.preventDefault();
+        const input = e.target.value;
+        setAddText(input);
     }
 
     return (
@@ -20,13 +28,15 @@ export default function SideBar({ interests, addInterest, removeInterest }) {
             <form class="relative w-full my-2 group">
                 <input
                     type="text"
+                    value={addText}
+                    onChange={handleAddText}
                     class="w-full rounded p-2 pr-12 focus:outline-none bg-gray-800"
                     placeholder="New interest..."
                 />
                 <button
                     onClick={handleAddInterest}
                     type="submit"
-                    class="absolute opacity-0 group-hover:opacity-100 right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-0.5 rounded hover:bg-blue-600"
+                    class={`${addText.length ? "opacity-100" : "opacity-0"} absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-0.5 rounded hover:bg-blue-600`}
                 >
                     Add
                 </button>
@@ -42,7 +52,7 @@ export default function SideBar({ interests, addInterest, removeInterest }) {
                         </span>
                         <button 
                             class="text-gray-600 font-extrabold text-xs ml-2 group-hover:text-red-800 group-hover:inline"
-                            onClick={() => handleRemoveInterest(i)}
+                            onClick={() => handleRemoveInterest(interest)}
                         >
                             &#x2715;
                         </button>

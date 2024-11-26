@@ -39,16 +39,16 @@ export default function Home() {
         postInterest(interest).catch(error => {
             console.error('Error posting interest:', error);
             // Optionally rollback the state change on error
-            setInterests(interests);
+            //setInterests(interests);
         });
     }
 
     function removeInterest(interest) {
         setInterests(interests.filter(i => i !== interest));
         deleteInterest(interest).catch(error => {
-            console.error('Error deleting interest:', error);
+            console.error('Error deleting interest:', error, interest, interests);
             // Optionally rollback the state change on error
-            setInterests([...interests, interest]);
+            //setInterests([...interests, interest]);
         });
     }
 

@@ -21,11 +21,12 @@ export async function postInterest(newInterest) {
 }
 
 export async function deleteInterest(topicToRemove) {
-    const response = await fetch(`/api/topic/${topicToRemove}`, {
+    const response = await fetch(`/api/topic?name=${topicToRemove}`, {
         method: "DELETE",
     });
+    console.log(response);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return response.json();
+    return null;
 } 

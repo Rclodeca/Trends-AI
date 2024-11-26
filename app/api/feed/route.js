@@ -3,6 +3,7 @@ import { getTopics } from "@/lib/topic";
 import { getArticlesByTopic } from "@/lib/news-api";
 import { summarizeArticlesByTopic, formatForSummarization } from "@/lib/summarize";
 import { jsonResponse } from "@/utils/responseHelpers";
+import { STATUS_MAP } from "@/lib/constants";
 
 const TOPIC_LIMIT = 5;
 
@@ -20,68 +21,113 @@ export async function GET(req) {
             console.log(`${LOG_PREFIX} Reached topic limit of ${TOPIC_LIMIT}. Reducing topics`);
             topics = topics.slice(0, TOPIC_LIMIT)
         }
+        console.log(`${LOG_PREFIX} Fetching topics: ${topics}`);
+        topics = topics.map(topic =>{
+            return {    
+                name:topic,
+                status: STATUS_MAP.PENDING,
+                articles: [],
+                summary: ""
+            }
+        })
+        console.log(`${LOG_PREFIX} Fetched topics: ${JSON.stringify(topics)}`);
 
         //Get cached topics
         const cache = new Cache();
-        const cacheMap = {}
-        await Promise.all(topics.map(topic => 
-            cache.get(topic)
+        topics = await Promise.all(topics.map((topic) => 
+            cache.get(topic.name)
             .then(data => {
                 if(data) {
-                    cacheMap[topic] = data
-                    console.log(`${LOG_PREFIX} Successfully fetched cached topic: ${topic}`)
+                    console.log(`${LOG_PREFIX} Successfully fetched cached topic: ${topic.name}`)
+                    topic.status = STATUS_MAP.CACHED
+                    topic.summary = data
                 }
+                return topic
+            })
+            .catch(e => {
+                console.error(`${LOG_PREFIX} Error fetching cached topic: ${topic.name}. Error: ${e}`)
+                topic.status = STATUS_MAP.ERROR
+                return topic
             })
         ))
-        .catch(e => {
-            console.error(`${LOG_PREFIX} Error fetching cached topics: ${e}`)
-        })
+        console.log(`${LOG_PREFIX} Fetched cached topics: ${JSON.stringify(topics)}`);
 
         //fetch articles
-        const topicsToFetch = topics.filter(topic => !cacheMap[topic])
-        const articlesByTopic = await Promise.all(
-            topicsToFetch.map(topic => 
-                getArticlesByTopic(topic)
-                .then(articles => {
-                    return  {
-                        topic,
-                        articles: formatForSummarization(articles)
+        topics = await Promise.all(topics.map(async (topic) => {
+            if(topic.status !== STATUS_MAP.PENDING) {
+                return Promise.resolve(topic)
+            }
+
+            return getArticlesByTopic(topic.name)
+                .then(data => {
+                    if(data && data.length) {
+                        console.log(`${LOG_PREFIX} Successfully fetched articles for topic: ${topic.name}`)
+                        topic.articles = formatForSummarization(data)
+                        topic.status = STATUS_MAP.FETCHED
                     }
+                    else {
+                        console.log(`${LOG_PREFIX} No articles fetched for topic: ${topic.name}`)
+                        topic.status = STATUS_MAP.SKIPPED
+                    }
+                    return topic
                 })
-            )
-        )
+                .catch(e => {
+                    console.error(`${LOG_PREFIX} Error fetching articles for topic: ${topic.name}. Error: ${e}`)
+                    topic.status = STATUS_MAP.ERROR
+                    return topic
+                })
+        }))
+        console.log(`${LOG_PREFIX} Fetched articles: ${JSON.stringify(topics)}`);
 
         //summarize articles
-        const summaryByTopic = await Promise.all(
-            articlesByTopic.map(({topic, articles}) => 
-                summarizeArticlesByTopic(topic, articles)
-            )
-        )
-        const fetchMap = {}
-        summaryByTopic.forEach(({topic, summary}) => {
-            fetchMap[topic] = summary
-        })
+        topics = await Promise.all(topics.map(async (topic) => {
+            if(topic.status !== STATUS_MAP.FETCHED) {
+                return Promise.resolve(topic)
+            }
+            return summarizeArticlesByTopic(topic.name, topic.articles)
+                .then(data => {
+                    if(data) {
+                        console.log(`${LOG_PREFIX} Successfully summarized articles for topic: ${topic.name}`)
+                        topic.summary = data
+                    }
+                    else {
+                        console.log(`${LOG_PREFIX} No summary fetched for topic: ${topic.name}`)
+                        topic.status = STATUS_MAP.SKIPPED
+                    }
+                    return topic
+                })
+                .catch(e => {
+                    console.error(`${LOG_PREFIX} Error summarizing articles for topic: ${topic.name}. Error: ${e}`)
+                    topic.status = STATUS_MAP.ERROR
+                    return topic
+                })
+        }))
+        console.log(`${LOG_PREFIX} Summarized articles: ${JSON.stringify(topics)}`);
 
         //cache new topics, send and forget
-        Promise.all(summaryByTopic.map(({topic, summary}) =>
-            cache.set(topic, summary)
-        ))
-        .catch(e => {
-            console.error(`${LOG_PREFIX} Error caching topics: ${e}`)
-        })
+        Promise.all(topics.map((topic) => {
+            if(topic.status !== STATUS_MAP.FETCHED || !topic.summary || typeof topic.summary !== "string") {
+                return Promise.resolve()
+            }
+            return cache.set(topic.name, topic.summary)
+                .catch(e => {
+                    console.error(`${LOG_PREFIX} Error caching topic: ${topic.name}. Error: ${e}`)
+                })
+        }))
         
         //merged fetched and cached topics
-        const mergedSummaries = topics.map(topic => {
+        const topicResponses = topics.map(({name, status, summary}) => {
             return {
-                topic,
-                summary: cacheMap[topic] || fetchMap[topic]
+                topic: name,
+                status,
+                summary
             }    
         })
 
-        return jsonResponse(mergedSummaries);
+        return jsonResponse(topicResponses);
     } 
     catch (error) {
-        console.error(LOG_PREFIX, "Error:" + error);
+        console.error(LOG_PREFIX, "GeneralError:" + error);
         return jsonResponse("Internal Server Error", 500);
     }
 }

@@ -29,8 +29,8 @@ export async function POST(req) {
         if(!topics.includes(topic)) {
             await addTopic(topic)
         }
-
-        return jsonResponse();
+        console.log(topics);
+        return jsonResponse(200);
     } 
     catch (error) {
         console.error(LOG_PREFIX, "Error:" + error);
