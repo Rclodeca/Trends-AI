@@ -23,35 +23,35 @@ export default function SideBar({ interests, addInterest, removeInterest }) {
     }
 
     return (
-        <div class="w-64 bg-gray-900 text-white p-4">
-            <h2 class="text-lg font-bold mb-4">Interests</h2>
-            <form class="relative w-full my-2 group">
+        <div className="w-64 bg-gray-900 text-white p-4">
+            <h2 className="text-lg font-bold mb-4">Interests</h2>
+            <form className="relative w-full my-2 group">
                 <input
                     type="text"
                     value={addText}
                     onChange={handleAddText}
-                    class="w-full rounded p-2 pr-12 focus:outline-none bg-gray-800"
+                    className="w-full rounded p-2 pr-12 focus:outline-none bg-gray-800"
                     placeholder="New interest..."
                 />
                 <button
                     onClick={handleAddInterest}
                     type="submit"
-                    class={`${addText.length ? "opacity-100" : "opacity-0"} absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-0.5 rounded hover:bg-blue-600`}
+                    className={`${addText.length ? "opacity-100" : "opacity-0"} absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-0.5 rounded hover:bg-blue-600`}
                 >
                     Add
                 </button>
             </form>
-            <div class="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2">
                 {interests.map((interest, i) => (
                     <div 
-                        class="text-left p-2 bg-gray-800 rounded hover:bg-gray-600  group"
+                        className="text-left p-2 bg-gray-800 rounded hover:bg-gray-600  group"
                         key={i}
                     >
-                        <span class="text-white  group-hover:text-opacity-20">
+                        <span className="text-white  group-hover:text-opacity-20">
                             {interest}
                         </span>
                         <button 
-                            class="text-gray-600 font-extrabold text-xs ml-2 group-hover:text-red-800 group-hover:inline"
+                            className="text-gray-600 font-extrabold text-xs ml-2 group-hover:text-red-800 group-hover:inline"
                             onClick={() => handleRemoveInterest(interest)}
                         >
                             &#x2715;
